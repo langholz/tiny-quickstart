@@ -1,3 +1,4 @@
+// import { response } from "express";
 import React, { useState, useEffect, useCallback } from "react";
 import { usePlaidLink } from "react-plaid-link";
 import "./App.scss";
@@ -42,6 +43,14 @@ function App(props) {
     setLoading(false);
   }, [setData, setLoading]);
 
+  const getTransactions = React.useCallback(async () => {
+    setLoading(true);
+    const response = await fetch("/api/trx", {});
+    const data = await response.json();
+    setData(data);
+    setLoading(false);
+  }, [setData, setLoading]);
+
   let isOauth = false;
 
   const config = {
@@ -70,6 +79,11 @@ function App(props) {
       <button onClick={() => open()
         } disabled={!ready}>
         <strong>Link account</strong>
+      </button>
+
+      <button onClick={() => getTransactions()
+        } disabled={!ready}>
+        <strong>Transactions</strong>
       </button>
 
       {!loading &&

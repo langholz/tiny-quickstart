@@ -67,4 +67,27 @@ app.get("/api/balance", async (req, res, next) => {
   });
 });
 
+app.get("/api/trx", async (req, res, next) => {
+  const access_token = req.session.access_token;
+  const moment = require("moment");
+  const now = moment();
+  const today = now.format('YYYY-MM-DD');
+  const thirtyDaysAgo = now.subtract(30, 'days').format('YYYY-MM-DD');
+
+  try {
+    const trxResponse = await client.transactionsGet({
+        access_token,
+        start_date: thirtyDaysAgo,
+        end_date: today,
+    });
+    res.json({
+        Trx: trxResponse.data.transactions,
+    });
+  } catch (error) {
+    res.json({
+        Error: error.response && error.response.data ? error.response.data : error,
+    });
+  }
+});
+
 app.listen(process.env.PORT || 8080);
